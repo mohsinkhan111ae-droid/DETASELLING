@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dashboard - DataHub</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="topbar">
+    <h2>DataHub Dashboard</h2>
+    <button id="logoutBtn" class="btn secondary small">Logout</button>
+  </div>
+  <div class="container">
+    <div class="card">
+      <h3>Your Wallet</h3>
+      <div class="balance"><span>Balance:</span><span id="balance">$0</span></div>
+      <button id="withdrawBtn" class="btn primary">Withdraw</button>
+      <p id="withdrawMsg" class="small muted"></p>
+    </div>
+    <div class="card">
+      <h3>Data Selling</h3>
+      <button id="startSelling" class="btn primary">Start Selling</button>
+      <button id="stopSelling" class="btn secondary">Stop Selling</button>
+    </div>
+    <div class="card">
+      <h3>History</h3>
+      <ul id="history" class="history"></ul>
+    </div>
+  </div>
+  <script>
+    const firebaseConfig = {
+      apiKey: "PASTE_API_KEY",
+      authDomain: "your-project.firebaseapp.com",
+      projectId: "your-project-id"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const balanceEl = document.getElementById('balance');
+    const withdrawBtn = document.getElementById('withdrawBtn');
+    const withdrawMsg = document.getElementById('withdrawMsg');
+    const startSelling = document.getElementById('startSelling');
+    const stopSelling = document.getElementById('stopSelling');
+    const historyList = document.getElementById('history');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    let userDocRef = null;
+
+    auth.onAuthStateChanged(async (user)=>{
+      if(!user){ window.location.href="index.html"; return; }
+      userDocRef = db.collection("users").doc(user.uid);
+      userDocRef.onSnapshot(doc=>{
+        if(doc.exists){
+          const data = doc.data();
+          balanceEl.textContent = "$"+(data.balance||0);
+        }
+      });
+      db.collection("users").doc(user.uid).collection("history")
+        .orderBy("createdAt","desc").onSnapshot(snap=>{
+          historyList.innerHTML = "";
+          snap.forEach(doc=>{
+            const li = document.createElement("li");
+            const d = doc.data();
+            li.textContent = d.type + " - " + (d.amount||"") + " on " + (d.createdAt?.toDate?.().toLocaleString() || "");
+            historyList.appendChild(li);
+          });
+        });
+    });
+
+    logoutBtn.addEventListener('click', ()=>auth.signOut());
+
+    withdrawBtn.addEventListener('click', async ()=>{
+      try {
+        await userDocRef.update({ balance: firebase.firestore.FieldValue.increment(-10) });
+        await userDocRef.collection("history").add({
+          type: "withdraw",
+          amount: 10,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        withdrawMsg.textContent = "Withdrawn $10 (demo).";
+      } catch(e){ withdrawMsg.textContent = e.message; }
+    });
+
+    startSelling.addEventListener('click', async ()=>{
+      try {
+        await userDocRef.update({ balance: firebase.firestore.FieldValue.increment(5) });
+        await userDocRef.collection("history").add({
+          type: "start-selling",
+          amount: 5,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch(e){ console.error(e); }
+    });
+
+    stopSelling.addEventListener('click', async ()=>{
+      try {
+        await userDocRef.collection("history").add({
+          type: "stop-selling",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch(e){ console.error(e); }
+    });
+  </script>
+</body>
+</html>

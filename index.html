@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>DataHub - Login</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="login-bg">
+
+  <div class="login-wrapper">
+    <div class="login-card">
+      <h1>Welcome Back 👋</h1>
+      <p class="subtitle">Sign in to continue to <b>DataHub</b></p>
+
+      <div class="form-group">
+        <input id="email" type="email" placeholder="Email address"/>
+      </div>
+      <div class="form-group">
+        <input id="password" type="password" placeholder="Password"/>
+      </div>
+
+      <button id="loginBtn" class="btn primary">Login</button>
+      <button id="signupBtn" class="btn secondary">Create Account</button>
+
+      <p id="msg" class="error-text"></p>
+    </div>
+  </div>
+
+  <script>
+    // ====== Firebase Config (replace with your own) ======
+    const firebaseConfig = {
+      apiKey: "PASTE_API_KEY",
+      authDomain: "your-project.firebaseapp.com",
+      projectId: "your-project-id"
+    };
+    // ====================================================
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const emailEl = document.getElementById('email');
+    const passEl = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const signupBtn = document.getElementById('signupBtn');
+    const msg = document.getElementById('msg');
+
+    function showMessage(t){ msg.textContent = t; setTimeout(()=> msg.textContent='',4000); }
+
+    loginBtn.addEventListener('click', async ()=>{
+      try {
+        await auth.signInWithEmailAndPassword(emailEl.value, passEl.value);
+        window.location.href="dashboard.html";
+      } catch(e){ showMessage(e.message); }
+    });
+
+    signupBtn.addEventListener('click', async ()=>{
+      try {
+        const userCred = await auth.createUserWithEmailAndPassword(emailEl.value, passEl.value);
+        await db.collection("users").doc(userCred.user.uid).set({
+          email: emailEl.value,
+          balance: 0,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        window.location.href="dashboard.html";
+      } catch(e){ showMessage(e.message); }
+    });
+  </script>
+</body>
+</html>

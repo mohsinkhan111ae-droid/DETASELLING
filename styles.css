@@ -1,0 +1,123 @@
+/* Background gradient */
+.login-bg {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Glassmorphism Card */
+.login-card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  padding: 40px;
+  width: 320px;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.login-card h1 {
+  margin-bottom: 10px;
+  font-size: 1.8em;
+}
+.subtitle {
+  font-size: 0.9em;
+  color: #ddd;
+  margin-bottom: 25px;
+}
+
+/* Inputs */
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 1em;
+}
+
+/* Buttons */
+.btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn.primary {
+  background: #2ecc71;
+  color: #fff;
+}
+.btn.secondary {
+  background: #3498db;
+  color: #fff;
+}
+
+.error-text {
+  margin-top: 12px;
+  font-size: 0.85em;
+  color: #ffb3b3;
+}
+
+/* Dashboard styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f6fa;
+  color: #333;
+}
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+.card {
+  background: #fff;
+  padding: 20px 25px;
+  margin: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  max-width: 400px;
+  width: 100%;
+}
+h1, h2, h3 { margin: 10px 0; }
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #2c3e50;
+  color: #fff;
+}
+.container {
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.balance {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.4em;
+  margin: 10px 0;
+}
+.history {
+  list-style: none;
+  padding: 0;
+}
+.history li {
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95em;
+}
+.muted { color: #888; }
+.small { font-size: 0.85em; }
